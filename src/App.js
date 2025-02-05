@@ -77,10 +77,14 @@ function App() {
           return timeDiff / timeSlotSize + 1; // 1부터 시작하는 인덱스
         });
   
+        // 🔥 연속 근무 가능하도록 검사
+        const previousWorker = index > 0 ? assignment[index - 1] : null;
+        const canContinueShift = previousWorker === worker.name; // 이전 슬롯과 같은 근로자인 경우
+  
         if (
           workHours < worker.attendanceCount &&
           workerAvailableIndices.includes(currentSlotIndex) &&
-          !assignment.includes(worker.name)
+          (!assignment.includes(worker.name) || canContinueShift) // ✅ 연속 근무 가능 고려
         ) {
           console.log(`✅ ${worker.name} 배정됨 → 시간 인덱스: ${currentSlotIndex}`);
   
@@ -111,6 +115,7 @@ function App() {
   
     setPossibleSchedules(result);
   };
+  
   
   
   
