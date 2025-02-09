@@ -45,8 +45,7 @@ function App() {
         return;
     }
 
-    const result = new Set();  // 중복을 피하기 위한 Set
-    const uniqueSchedules = []; // 중복이 제거된 시간표 배열
+    const result = [];  // 가능한 시간표 저장 배열
     const assignment = new Array(schedule.length).fill(null);
     const workerHoursMap = {};
     const workerShiftCount = {};  // 하루 내 연속되지 않은 근무 횟수 관리
@@ -70,14 +69,9 @@ function App() {
 
     function backtrack(index) {
         if (index === schedule.length) {
-            // 모든 칸에 근무자가 배정되었는지 확인
             if (!assignment.includes(null) && !assignment.includes("근무 가능자 없음")) {
-                const scheduleKey = JSON.stringify(assignment);
-                if (!result.has(scheduleKey)) {
-                    console.log("🛑 유니크한 시간표 발견:", assignment);
-                    result.add(scheduleKey);
-                    uniqueSchedules.push([...assignment]); // 근무자 없는 칸이 없으면 배열에 추가
-                }
+                const scheduleCopy = [...assignment];
+                result.push(scheduleCopy);
             }
             return;
         }
@@ -127,10 +121,40 @@ function App() {
 
     backtrack(0);
 
-    console.log(`✅ 유니크한 시간표 개수 (근무자 없는 칸이 없는 시간표): ${uniqueSchedules.length}`);
+    console.log(`✅ 총 생성된 시간표 개수: ${result.length}`);
 
-    setPossibleSchedules(uniqueSchedules.length > 0 ? uniqueSchedules : [assignment]);
+    // 출근 횟수 계산 함수
+    function calculateTotalShifts(schedule) {
+        const shiftMap = {};
+        let totalShifts = 0;
+
+        for (let i = 0; i < schedule.length; i++) {
+            const worker = schedule[i];
+            if (worker && worker !== "근무 가능자 없음") {
+                const day = Math.floor((schedule[i] - 1) / (24 * 2));
+
+                if (!shiftMap[worker]) shiftMap[worker] = {};
+                if (!shiftMap[worker][day]) {
+                    shiftMap[worker][day] = true;
+                    totalShifts++;
+                }
+            }
+        }
+        return totalShifts;
+    }
+
+    // 출근 횟수를 기준으로 정렬 후 최대 10개 선택
+    const sortedSchedules = result
+        .map(schedule => ({ schedule, shifts: calculateTotalShifts(schedule) }))
+        .sort((a, b) => a.shifts - b.shifts)  // 출근 횟수가 적은 순으로 정렬
+        .slice(0, 10)  // 최대 10개 선택
+        .map(item => item.schedule);
+
+    console.log(`✅ 최종 출력할 시간표 개수: ${sortedSchedules.length}`);
+
+    setPossibleSchedules(sortedSchedules.length > 0 ? sortedSchedules : [assignment]);
 };
+
 
   
   return (
