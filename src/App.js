@@ -3,6 +3,7 @@ import './App.css';
 import * as S from './styles/MainStyled';
 import TimeSelect from './components/TimeSelect';
 import WorkerManager from './components/WorkerManager';
+import TimeTable from './components/TimeTable';
 
 function App() {
   // 상태 정의
@@ -222,67 +223,13 @@ function App() {
         )}
       </S.SelectPart>
   
-      <S.TimeTablePart>
-        <h3>추천 시간표</h3>
-        {possibleSchedules.length > 0 ? (
-          <>
-            <div>
-              {possibleSchedules.map((_, idx) => (
-                <button 
-                  key={idx} 
-                  onClick={() => setSelectedScheduleIndex(idx)}
-                  style={{
-                    marginRight: '5px',
-                    padding: '5px 10px',
-                    backgroundColor: selectedScheduleIndex === idx ? '#007bff' : '#ccc',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  시간표 {idx + 1}
-                </button>
-              ))}
-            </div>
-  
-            <table border="1">
-              <thead>
-                <tr>
-                  <th>시간</th>
-                  {daysOfWeek.map((day, idx) => (
-                    <th key={idx}>{day}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {Array.from({ length: schedule.length }).map((_, rowIdx) => (
-                  <tr key={rowIdx}>
-                    <td>{getFormattedTime(schedule[rowIdx])}</td>
-                    {daysOfWeek.map((day, dayIdx) => {
-                      const slotIndex = rowIdx + dayIdx * schedule.length;
-                      const workerForSlot = possibleSchedules[selectedScheduleIndex]
-                        ? possibleSchedules[selectedScheduleIndex][slotIndex]
-                        : null;
-                      return (
-                        <td key={dayIdx} style={{
-                          backgroundColor: workerForSlot && workerForSlot !== "근무 가능자 없음"
-                            ? workerColors[workers.findIndex(w => w.name === workerForSlot) % workerColors.length]
-                            : (workerForSlot === "근무 가능자 없음" ? "#F8D7DA" : "inherit")
-                        }}>
-                          {workerForSlot || ""}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        ) : (
-          <p>시간표를 생성해주세요.</p>
-        )}
-      </S.TimeTablePart>
+      <TimeTable 
+        schedule={schedule}
+        possibleSchedules={possibleSchedules}
+        selectedScheduleIndex={selectedScheduleIndex}
+        workers={workers}
+        workerColors={workerColors}
+      />
     </S.Container>
   );
 }
