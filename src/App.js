@@ -1,4 +1,3 @@
-// App.js
 import { useState } from 'react';
 import './App.css';
 import * as S from './styles/MainStyled';
@@ -13,21 +12,9 @@ function App() {
   const [possibleSchedules, setPossibleSchedules] = useState([]); // 최종 추천 시간표 (배정 배열)
   const [selectedScheduleIndex, setSelectedScheduleIndex] = useState(0); // 선택된 시간표
 
-  const daysOfWeek = ["월", "화", "수", "목", "금"];
-
   const workerColors = [
     "#D4EDDA", "#C1E1FF", "#FFE0B3", "#F8D7DA", "#F1C0A9", "#D1C4E9"
   ];
-
-  const getFormattedTime = (timeSlot) => {
-    const baseTime = new Date(2025, 0, 6, 10, 0); // 기준 시작 시간: 10:00
-    baseTime.setMinutes(baseTime.getMinutes() + (timeSlot - 1) * 30);
-    return baseTime.toLocaleTimeString("ko-KR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false
-    });
-  };
 
   // ★ 최적화된 시간표 생성 (Web Worker 활용) ★
   const generateSchedules = () => {

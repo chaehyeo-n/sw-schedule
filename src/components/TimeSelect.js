@@ -4,40 +4,58 @@ import ScheduleSelector from 'react-schedule-selector';
 class TimeSelect extends React.Component {
   handleChange = (newSchedule) => {
     const { onSetSchedule } = this.props;
-
-    if (typeof onSetSchedule === 'function') {
-      const startTime = new Date(2025, 0, 6, 10, 0).getTime(); // 2025-01-06 10:00
-      const timeSlotSize = 30 * 60 * 1000; // 30분 (밀리초)
-      
-      // 선택된 시간들을 인덱스 값으로 변환
-      const indexedSchedule = newSchedule.map(time => {
-        const timeDiff = new Date(time).getTime() - startTime;
-        return timeDiff / timeSlotSize + 1; // 1부터 시작하는 인덱스
-      });
-
-      onSetSchedule(indexedSchedule); // 변환된 인덱스 배열 전달
-    } else {
-      console.error('onSetSchedule is not a function');
+    // 선택된 시간을 요일별로 그룹화 (0: 월, 1: 화, …, 4: 금)
+    const groupedSchedule = {};
+    newSchedule.forEach(time => {
+      const dateObj = new Date(time);
+      const jsDay = dateObj.getDay(); // Sunday=0, Monday=1, ...
+      const dayIndex = jsDay - 1; // 월~금: 0~4
+      if (dayIndex < 0 || dayIndex > 4) return; // 주말 무시
+      // 10시 기준으로 30분 단위 슬롯 계산
+      const baseTime = new Date(dateObj);
+      baseTime.setHours(10, 0, 0, 0);
+      const diffMinutes = (dateObj.getTime() - baseTime.getTime()) / 60000;
+      const slot = Math.floor(diffMinutes / 30) + 1;
+      if (!groupedSchedule[dayIndex]) {
+        groupedSchedule[dayIndex] = [];
+      }
+      if (!groupedSchedule[dayIndex].includes(slot)) {
+        groupedSchedule[dayIndex].push(slot);
+      }
+    });
+    // 각 요일별 슬롯을 정렬
+    for (let day in groupedSchedule) {
+      groupedSchedule[day].sort((a, b) => a - b);
     }
+    onSetSchedule(groupedSchedule);
   };
 
   handleConfirm = () => {
     const { onConfirm } = this.props;
-    
     if (typeof onConfirm === 'function') {
-      onConfirm(); // 부모로 설정 완료 호출
+      onConfirm();
     }
   };
 
   render() {
     const { schedule } = this.props;
-
+    // schedule 객체({0: [...], 1: [...], …})를 Date 객체 배열로 변환하여 ScheduleSelector에 전달
+    const selectionDates = [];
+    // 기준: 월요일은 2025-01-06 (10시)
+    const baseDate = new Date(2025, 0, 6, 10, 0);
+    for (let day = 0; day < 5; day++) {
+      const slots = schedule[day] || [];
+      slots.forEach(slot => {
+        const date = new Date(baseDate);
+        date.setDate(baseDate.getDate() + day);
+        date.setMinutes(date.getMinutes() + (slot - 1) * 30);
+        selectionDates.push(date);
+      });
+    }
     return (
       <div>
         <ScheduleSelector
-          selection={schedule.map(num => 
-            new Date(2025, 0, 6, 10, 0).getTime() + (num - 1) * 30 * 60 * 1000
-          )}
+          selection={selectionDates}
           startDate={'2025-1-6'}
           numDays={5}
           minTime={10}
