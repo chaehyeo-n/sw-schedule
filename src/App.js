@@ -47,45 +47,54 @@ function App() {
   };
 
   return (
-    <S.Container>
-      <S.SelectPart>
-        <h3>SW교육원 근로 시간표 짜기</h3>
-        {!isScheduleSet ? (
-          <>
-            <h4>사무실 총 근무 시간 설정</h4>
-            <TimeSelect 
-              schedule={schedule}
-              onSetSchedule={setSchedule}
-              onConfirm={() => setIsScheduleSet(true)}
-            />
-          </>
-        ) : (
-          <>
-            <h4>근로자 관리</h4>
-            <WorkerManager
-              workers={workers}
-              onAddWorker={(worker) => setWorkers([...workers, worker])}
-              onUpdateWorker={(index, updatedWorker) => {
-                const updatedWorkers = [...workers];
-                updatedWorkers[index] = updatedWorker;
-                setWorkers(updatedWorkers);
-              }}
-              schedule={schedule}
-            />
-            <button onClick={generateSchedules}>시간표 생성</button>
-          </>
-        )}
-      </S.SelectPart>
+    <>
+      <S.Container>
+        <S.SelectPart>
+          <h1>SW교육원 근로 시간표 생성기</h1>
+          {!isScheduleSet ? (
+            <>
+              <h2>사무실 총 근무 시간 설정</h2>
+              <TimeSelect 
+                schedule={schedule}
+                onSetSchedule={setSchedule}
+                onConfirm={() => setIsScheduleSet(true)}
+              />
+            </>
+          ) : (
+            <>
+              <h2>근로자 관리</h2>
+              <WorkerManager
+                workers={workers}
+                onAddWorker={(worker) => setWorkers([...workers, worker])}
+                onUpdateWorker={(index, updatedWorker) => {
+                  const updatedWorkers = [...workers];
+                  updatedWorkers[index] = updatedWorker;
+                  setWorkers(updatedWorkers);
+                }}
+                schedule={schedule}
+              />
+              <S.Buttons>
+                <S.StyledButton onClick={generateSchedules}>시간표 생성</S.StyledButton>
+              </S.Buttons>
+            </>
+          )}
+        </S.SelectPart>
 
-      <TimeTable 
-        schedule={schedule}
-        possibleSchedules={possibleSchedules}
-        selectedScheduleIndex={selectedScheduleIndex}
-        setSelectedScheduleIndex={setSelectedScheduleIndex}
-        workers={workers}
-        workerColors={workerColors}
-      />
-    </S.Container>
+        <S.TimeTablePart>
+          <TimeTable 
+            schedule={schedule}
+            possibleSchedules={possibleSchedules}
+            selectedScheduleIndex={selectedScheduleIndex}
+            setSelectedScheduleIndex={setSelectedScheduleIndex}
+            workers={workers}
+            workerColors={workerColors}
+          />
+        </S.TimeTablePart>
+      </S.Container>
+      <S.Footer>
+        <p>@chaehyeo-n</p>
+      </S.Footer>
+    </>
   );
 }
 
