@@ -4,6 +4,7 @@ import * as S from './styles/MainStyled';
 import TimeSelect from './components/TimeSelect';
 import WorkerManager from './components/WorkerManager';
 import TimeTable from './components/TimeTable';
+import Loading from './components/Loading';
 
 function App() {
   const [schedule, setSchedule] = useState([]);           // 한 날의 슬롯 배열 (예: [1,2,3,...])
@@ -11,6 +12,7 @@ function App() {
   const [isScheduleSet, setIsScheduleSet] = useState(false);  
   const [possibleSchedules, setPossibleSchedules] = useState([]); // 최종 추천 시간표 (배정 배열)
   const [selectedScheduleIndex, setSelectedScheduleIndex] = useState(0); // 선택된 시간표
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 관리
 
   const workerColors = [
     "#D4EDDA", "#C1E1FF", "#FFE0B3", "#D1C4E9", "#F1C0A9", "#FFB6C1", "#F8D7DA"
@@ -19,6 +21,7 @@ function App() {
   // ★ 최적화된 시간표 생성 (Web Worker 활용) ★
   const generateSchedules = () => {
     console.log("⏳ 시간표 생성 시작...");
+    setIsLoading(true);
     
     // Web Worker 경로 지정 (public 폴더에서 경로를 제공)
     const worker = new Worker(`${process.env.PUBLIC_URL}/scheduleWorker.js`);
@@ -31,23 +34,27 @@ function App() {
       if (event.data.error) {
         alert(event.data.error);
         worker.terminate();
+        setIsLoading(false);
         return;
       }
       const { topSchedules } = event.data;
       console.log(`✅ 총 생성된 해 후보 개수: ${topSchedules.length}`);
       setPossibleSchedules(topSchedules);
       setSelectedScheduleIndex(0);
+      setIsLoading(false);
       worker.terminate();
     };
 
     worker.onerror = (error) => {
       console.error("Worker error:", error);
+      setIsLoading(false);
       worker.terminate();
     };
   };
 
   return (
     <>
+      {isLoading && <Loading />}
       <S.Container>
         <S.SelectPart>
           <h1>SW교육원 근로 시간표 생성기</h1>
