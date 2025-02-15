@@ -92,7 +92,12 @@ const WorkerManager = ({ workers, onAddWorker, onUpdateWorker }) => {
                   <p>근무 시간대:</p>
                   <ul>
                     {worker.schedule.length > 0 ? (
-                      worker.schedule.map((time, i) => <li key={i}>{new Date(time).toLocaleString()}</li>) // Date 객체를 문자열로 변환
+                      worker.schedule.map((time, i) => <li key={i}>{new Date(time).toLocaleString('ko-KR', {
+                      weekday: 'long',  // 요일 출력
+                      hour: 'numeric',  // 시간 출력
+                      minute: 'numeric',  // 분 출력
+                      hour12: true  // 오전/오후 표시
+                    })}</li>) // Date 객체를 문자열로 변환
                     ) : (
                       <li>시간 미설정</li>
                     )}
