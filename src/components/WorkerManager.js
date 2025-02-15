@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ScheduleSelector from 'react-schedule-selector';
+import * as S from '../styles/WorkerManagerStyled';
 
 const WorkerManager = ({ workers, onAddWorker, onUpdateWorker }) => {
   const [name, setName] = useState('');
@@ -36,26 +37,27 @@ const WorkerManager = ({ workers, onAddWorker, onUpdateWorker }) => {
 
   return (
     <div>
-      <h3>근무자 관리</h3>
-      <label>
-        이름:
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </label>
-      <label>
-        주 근무 시간 (0.5 단위로 입력):
-        <input
-          type="number"
-          value={attendanceCount}
-          onChange={(e) => setAttendanceCount(e.target.value)}
-          step="0.5" // 0.5 단위로 입력하도록 설정
-        />
-      </label>
+      <S.Forms>
+        <label>
+          이름:
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </label><br/>
+        <label>
+          주 근무 시간 (0.5 단위로 입력):
+          <input
+            type="number"
+            value={attendanceCount}
+            onChange={(e) => setAttendanceCount(e.target.value)}
+            step="0.5" // 0.5 단위로 입력하도록 설정
+          />
+        </label>
+      </S.Forms>
       <div>
-        <h4>근로 가능 시간대</h4>
+        <h3>근로 가능 시간대</h3>
         <ScheduleSelector
           selection={workerSchedule} // 선택한 값 반영
           startDate={'2025-1-6'}
@@ -69,35 +71,39 @@ const WorkerManager = ({ workers, onAddWorker, onUpdateWorker }) => {
           onChange={handleScheduleChange} // 변경 핸들러 연결
         />
       </div>
-      <button onClick={handleAddWorker}>근로 학생 추가</button>
+      <S.Buttons>
+        <S.StyledButton onClick={handleAddWorker}>근로 학생 추가</S.StyledButton>
+      </S.Buttons>
 
       <h4>근로 학생 목록</h4>
-      <ul>
-        {workers.map((worker, index) => (
-          <li key={index}>
-            <span 
-              style={{ cursor: 'pointer', textDecoration: 'underline', color: 'blue' }} 
-              onClick={() => toggleWorkerSchedule(index)}
-            >
-              {worker.name}
-            </span>
-            {selectedWorkerIndex === index && (
-              <div>
-                <p>주 근무 시간: {worker.attendanceCount} 시간</p>
-                <p>근무 시간대:</p>
-                <ul>
-                  {worker.schedule.length > 0 ? (
-                    worker.schedule.map((time, i) => <li key={i}>{new Date(time).toLocaleString()}</li>) // Date 객체를 문자열로 변환
-                  ) : (
-                    <li>시간 미설정</li>
-                  )}
-                </ul>
-                <button onClick={() => onUpdateWorker(index)}>수정</button>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
+        <S.WorkerDetails>
+          <ul>
+          {workers.map((worker, index) => (
+            <li key={index}>
+              <span 
+                style={{ cursor: 'pointer', textDecoration: 'underline', color: 'blue' }} 
+                onClick={() => toggleWorkerSchedule(index)}
+              >
+                {worker.name}
+              </span>
+              {selectedWorkerIndex === index && (
+                <div>
+                  <p>주 근무 시간: {worker.attendanceCount} 시간</p>
+                  <p>근무 시간대:</p>
+                  <ul>
+                    {worker.schedule.length > 0 ? (
+                      worker.schedule.map((time, i) => <li key={i}>{new Date(time).toLocaleString()}</li>) // Date 객체를 문자열로 변환
+                    ) : (
+                      <li>시간 미설정</li>
+                    )}
+                  </ul>
+                  {/*<button onClick={() => onUpdateWorker(index)}>수정</button>*/}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </S.WorkerDetails>
     </div>
   );
 };

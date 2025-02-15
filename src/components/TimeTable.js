@@ -60,7 +60,7 @@ const TimeTable = ({ schedule, possibleSchedules, selectedScheduleIndex, setSele
 
   return (
     <S.TimeTablePart>
-      <h3>추천 시간표</h3>
+      <h2>추천 시간표</h2>
       {possibleSchedules.length > 0 ? (
         <>
           {/* 시간표 선택 버튼 */}
@@ -156,7 +156,7 @@ const TimeTable = ({ schedule, possibleSchedules, selectedScheduleIndex, setSele
           </table>
         </>
       ) : (
-        <p>시간표를 생성해주세요.</p>
+        <p></p>
       )}
     </S.TimeTablePart>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import * as S from '../styles/WorkCount';
+import * as S from '../styles/WorkCountStyled';
 
 const TableRow = ({ data = [] }) => {
     const [RowData, setRowData] = useState(data);
