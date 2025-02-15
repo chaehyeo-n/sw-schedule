@@ -13,7 +13,7 @@ function App() {
   const [selectedScheduleIndex, setSelectedScheduleIndex] = useState(0); // 선택된 시간표
 
   const workerColors = [
-    "#D4EDDA", "#C1E1FF", "#FFE0B3", "#F8D7DA", "#F1C0A9", "#D1C4E9"
+    "#D4EDDA", "#C1E1FF", "#FFE0B3", "#D1C4E9", "#F1C0A9", "#FFB6C1", "#F8D7DA"
   ];
 
   // ★ 최적화된 시간표 생성 (Web Worker 활용) ★
