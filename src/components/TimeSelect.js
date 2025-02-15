@@ -1,5 +1,6 @@
 import React from 'react';
 import ScheduleSelector from 'react-schedule-selector';
+import * as S from '../styles/TimeSelectStyled';
 
 class TimeSelect extends React.Component {
   handleChange = (newSchedule) => {
@@ -60,13 +61,15 @@ class TimeSelect extends React.Component {
           numDays={5}
           minTime={10}
           maxTime={17}
-          dateFormat="dddd"
+          dateFormat="ddd"
           timeFormat="H:mm"
           hourlyChunks={2}
           rowGap="2px"
           onChange={this.handleChange}
         />
-        <button onClick={this.handleConfirm}>확인</button>
+        <S.Buttons>
+          <S.StyledButton onClick={this.handleConfirm}>확인</S.StyledButton>
+        </S.Buttons>
       </div>
     );
   }

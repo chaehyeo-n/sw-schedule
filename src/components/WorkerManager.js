@@ -64,7 +64,7 @@ const WorkerManager = ({ workers, onAddWorker, onUpdateWorker }) => {
           numDays={5}
           minTime={10}
           maxTime={17}
-          dateFormat="dddd"
+          dateFormat="ddd"
           timeFormat="H:mm"
           hourlyChunks={2} // 30분 단위로 설정
           rowGap="2px"
